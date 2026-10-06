@@ -9,7 +9,7 @@ The tool runs entirely in the browser. It can be hosted from any GitHub reposito
 - Asks chained research-planning questions.
 - Gives AI-style suggestions at each stage.
 - Optionally uses Puter.js AI for live answer refinement and AI-generated final plans.
-- Includes a tasteful GitHub star prompt to support project discovery.
+- Includes a centred GitHub star prompt to support project discovery.
 - Produces a final research title.
 - Generates a research aim, research questions, methodology guidance, paper structure, timeline, and a prompt that can be fed into GenAI or a local experiment agent.
 - Stores draft answers in browser local storage.
@@ -29,6 +29,7 @@ No secret API key is stored in this repository. The default rule is simple:
 - AI buttons call Puter.js only when the user clicks them.
 - Text entered into the tool may be sent to Puter/Liquid AI when AI mode is used.
 - If AI mode is unavailable, the app falls back to the built-in planner.
+- The GitHub star prompt opens the repository; visitors still need to click GitHub's own Star button for the star to count.
 
 ## Run Locally
 
