@@ -2,36 +2,72 @@ const questions = [
   {
     id: "researcherProfile",
     title: "Researcher profile",
-    prompt: "Who is this plan for, and what is their research maturity?",
-    help: "Mention role, field, confidence level, and whether this is for a student project, conference paper, journal paper, or funded study.",
-    type: "textarea",
-    placeholder:
-      "Example: New MSc student in Business Computing; interested in AI-enabled healthcare systems; needs a feasible 12-week empirical project.",
+    prompt: "Who is this plan for?",
+    help: "Pick the closest profile. Add a short note only if the project needs extra context.",
+    type: "objective",
+    multi: true,
+    choices: [
+      "New research student",
+      "MSc or final-year project",
+      "Lecturer-led study",
+      "Early-career researcher",
+      "Experienced researcher",
+      "Industry collaboration",
+      "Needs a fast pilot study",
+      "Needs journal-level depth",
+    ],
+    noteLabel: "Optional profile note",
+    placeholder: "Example: 12-week MSc Business Computing project with limited data access.",
   },
   {
     id: "domain",
     title: "Domain and topic area",
-    prompt: "What broad area should the paper sit in?",
-    help: "Name the discipline, applied setting, target community, and any keywords you want the paper to connect with.",
-    type: "textarea",
-    placeholder:
-      "Example: Human-AI interaction, educational technology, audio engineering, digital twins, computational optimisation...",
+    prompt: "Choose the broad research area.",
+    help: "Select one or more common domains. Add keywords if the exact topic is not listed.",
+    type: "objective",
+    multi: true,
+    choices: [
+      "Generative AI in education",
+      "Human-AI interaction",
+      "AI-assisted research workflows",
+      "Computational optimisation",
+      "Digital twins and simulation",
+      "Healthcare AI",
+      "Audio and music technology",
+      "Business computing",
+      "Cybersecurity or privacy",
+      "IoT and smart systems",
+    ],
+    noteLabel: "Optional keywords or setting",
+    placeholder: "Example: assessment feedback, hearing calibration, classroom analytics.",
   },
   {
     id: "problem",
     title: "Problem and gap",
-    prompt: "What problem should the paper solve or investigate?",
-    help: "Focus on a clear pain point, limitation in existing work, or real-world decision that researchers currently struggle with.",
-    type: "textarea",
-    placeholder:
-      "Example: Lecturers can generate lesson analytics, but they lack interpretable guidance for adapting learning activities across mixed-ability cohorts.",
+    prompt: "What kind of research gap should it target?",
+    help: "Use these objective gap types to avoid long typing at the start.",
+    type: "objective",
+    multi: true,
+    choices: [
+      "Existing tools are difficult for beginners",
+      "Current methods lack clear evaluation",
+      "There is limited evidence in a real-world setting",
+      "Users need more interpretable guidance",
+      "Manual work is slow or inconsistent",
+      "Privacy and ethics are not handled well",
+      "Few studies compare GenAI with local methods",
+      "The field lacks a practical framework",
+    ],
+    noteLabel: "Optional specific problem",
+    placeholder: "Example: lecturers need structured guidance for turning rough ideas into publishable plans.",
   },
   {
     id: "paperType",
     title: "Paper type",
-    prompt: "What kind of contribution should this become?",
-    help: "Choose the closest fit. The final plan will adapt its structure and methodology.",
-    type: "select",
+    prompt: "What kind of paper should this become?",
+    help: "Pick the closest contribution type. This shapes the final structure and method.",
+    type: "objective",
+    multi: false,
     options: [
       "Empirical study",
       "Design science / artefact paper",
@@ -40,51 +76,122 @@ const questions = [
       "Framework or model paper",
       "Mixed-methods study",
     ],
+    choices: [
+      "Empirical study",
+      "Design science / artefact paper",
+      "Computational experiment",
+      "Case study",
+      "Framework or model paper",
+      "Mixed-methods study",
+    ],
+    noteLabel: "Optional paper-type note",
+    placeholder: "Example: build a small tool, then evaluate it with users and expert review.",
   },
   {
     id: "novelty",
     title: "Novel contribution",
-    prompt: "What could make this paper new?",
-    help: "Think beyond a generic application of AI. Novelty can be a method combination, dataset, context, evaluation protocol, theory, or deployable artefact.",
-    type: "textarea",
-    placeholder:
-      "Example: A chained-question research planning framework that converts early ideas into structured research protocols and experiment prompts.",
+    prompt: "Where should the novelty come from?",
+    help: "Choose contribution angles that reviewers can recognise.",
+    type: "objective",
+    multi: true,
+    choices: [
+      "New guided workflow",
+      "New framework or taxonomy",
+      "New prototype or tool",
+      "New dataset or benchmark",
+      "New evaluation protocol",
+      "New comparison of GenAI and local execution",
+      "New applied case study",
+      "New explainability or ethics layer",
+    ],
+    noteLabel: "Optional novelty detail",
+    placeholder: "Example: chained questioning that converts early ideas into experiment-ready protocols.",
   },
   {
     id: "data",
     title: "Data and resources",
-    prompt: "What data, participants, software, devices, or documents can be used?",
-    help: "Include what is already available, what can be collected ethically, and what can be simulated locally or with GenAI support.",
-    type: "textarea",
-    placeholder:
-      "Example: Public datasets, lecturer/student interviews, GitHub repos, survey responses, local Python experiments, GenAI-generated protocols...",
+    prompt: "What resources can the study use?",
+    help: "Select what is feasible. The tool will build a plan around available evidence.",
+    type: "objective",
+    multi: true,
+    choices: [
+      "Public datasets",
+      "Survey responses",
+      "Interviews or focus groups",
+      "Expert review",
+      "Student or lecturer participants",
+      "GitHub repositories or documents",
+      "Local Python experiments",
+      "GenAI-assisted experiments",
+      "Simulation data",
+      "No dataset yet",
+    ],
+    noteLabel: "Optional data note",
+    placeholder: "Example: public dataset first, then small expert validation if time allows.",
   },
   {
     id: "method",
     title: "Methodology",
-    prompt: "How should the work be carried out?",
-    help: "Mention planned experiments, evaluation metrics, comparison baselines, qualitative coding, statistical tests, or validation steps.",
-    type: "textarea",
-    placeholder:
-      "Example: Build prototype, run scenario-based evaluation with 20 participants, compare plan quality before/after tool use, analyse usability and output quality.",
+    prompt: "How should the study be evaluated?",
+    help: "Select methods that make the paper defensible without requiring a long explanation.",
+    type: "objective",
+    multi: true,
+    choices: [
+      "Prototype and evaluate",
+      "Compare against a baseline",
+      "Run computational experiments",
+      "Use qualitative thematic analysis",
+      "Use statistical comparison",
+      "Measure usability",
+      "Measure accuracy or quality",
+      "Run ablation or sensitivity testing",
+      "Use expert judgement",
+      "Report reproducibility artefacts",
+    ],
+    noteLabel: "Optional method detail",
+    placeholder: "Example: compare plan quality before/after tool use with expert scoring.",
   },
   {
     id: "ethics",
     title: "Ethics and risks",
-    prompt: "What ethical, practical, or validity risks should be handled?",
-    help: "Useful papers are clear about bias, consent, reproducibility, data privacy, overclaiming, and limitations.",
-    type: "textarea",
-    placeholder:
-      "Example: Consent for participants, no sensitive data in prompts, avoid claiming AI authorship as research evidence, preregister evaluation criteria.",
+    prompt: "Which risks must be controlled?",
+    help: "Select the common risks. These become the ethics and validity section.",
+    type: "objective",
+    multi: true,
+    choices: [
+      "Participant consent",
+      "Data anonymisation",
+      "Prompt privacy",
+      "Bias and fairness",
+      "Small sample size",
+      "Reproducibility",
+      "Overclaiming AI capability",
+      "Human verification of AI output",
+      "Institutional ethics approval",
+    ],
+    noteLabel: "Optional ethics note",
+    placeholder: "Example: avoid using sensitive student data in third-party prompts.",
   },
   {
     id: "target",
     title: "Target and timeline",
-    prompt: "Where could this be submitted, and how much time is available?",
-    help: "Mention target venue type, expected quality level, word count, and deadline if known.",
-    type: "textarea",
-    placeholder:
-      "Example: 10-12 week pilot for a conference paper, then expanded journal submission to an HCI, education technology, or applied computing venue.",
+    prompt: "What is the target output?",
+    help: "Pick the intended publication level and timeframe.",
+    type: "objective",
+    multi: true,
+    choices: [
+      "Class project",
+      "Workshop paper",
+      "Conference paper",
+      "Journal article",
+      "Short 6-week sprint",
+      "12-week student project",
+      "3-6 month study",
+      "Needs GenAI experiment prompt",
+      "Needs local execution plan",
+    ],
+    noteLabel: "Optional target note",
+    placeholder: "Example: conference first, then expand into an Elsevier or ACM journal paper.",
   },
 ];
 
@@ -147,12 +254,40 @@ function currentQuestion() {
 }
 
 function getAnswer(id) {
-  return state.answers[id] || "";
+  const value = state.answers[id];
+  if (!value) return "";
+  if (typeof value === "string") return value;
+
+  const choices = Array.isArray(value.choices) ? value.choices : [];
+  const note = value.note ? `Details: ${value.note}` : "";
+  return [...choices, note].filter(Boolean).join("\n");
 }
 
 function setAnswer(id, value) {
   state.answers[id] = value;
   saveAnswers();
+}
+
+function getObjectiveRecord(question) {
+  const value = state.answers[question.id];
+  if (value && typeof value === "object") {
+    return {
+      choices: Array.isArray(value.choices) ? value.choices : [],
+      note: value.note || "",
+    };
+  }
+
+  return {
+    choices: [],
+    note: typeof value === "string" ? value : "",
+  };
+}
+
+function setObjectiveAnswer(question, choices, note) {
+  setAnswer(question.id, {
+    choices,
+    note: note.trim(),
+  });
 }
 
 function renderProgress() {
@@ -180,20 +315,10 @@ function renderQuestion() {
   elements.nextBtn.textContent =
     state.index === questions.length - 1 ? "Review final plan" : "Next";
 
-  const value = getAnswer(question.id);
   const input =
-    question.type === "select"
-      ? `<select id="answerInput">${question.options
-          .map(
-            (option) =>
-              `<option value="${escapeHtml(option)}" ${
-                option === value ? "selected" : ""
-              }>${escapeHtml(option)}</option>`,
-          )
-          .join("")}</select>`
-      : `<textarea id="answerInput" placeholder="${escapeHtml(
-          question.placeholder,
-        )}">${escapeHtml(value)}</textarea>`;
+    question.type === "objective"
+      ? renderObjectiveInput(question)
+      : renderTextInput(question);
 
   elements.questionPanel.innerHTML = `
     <div class="field-grid">
@@ -205,18 +330,105 @@ function renderQuestion() {
   `;
 
   const answerInput = document.querySelector("#answerInput");
-  if (!value && question.type === "select") {
-    setAnswer(question.id, answerInput.value);
+  if (question.type === "objective") {
+    bindObjectiveInput(question, answerInput);
+  } else {
+    answerInput.addEventListener("input", (event) => {
+      setAnswer(question.id, event.target.value);
+      renderProgress();
+      renderSuggestions();
+    });
   }
-
-  answerInput.addEventListener("input", (event) => {
-    setAnswer(question.id, event.target.value);
-    renderProgress();
-    renderSuggestions();
-  });
 
   renderSuggestions();
   renderProgress();
+}
+
+function renderObjectiveInput(question) {
+  const record = getObjectiveRecord(question);
+  const selected = new Set(record.choices);
+  const modeLabel = question.multi ? "Choose all that apply" : "Choose one";
+
+  return `
+    <div>
+      <p class="choice-instruction">${modeLabel}</p>
+      <div class="choice-grid" role="group" aria-label="${escapeHtml(
+        question.prompt,
+      )}">
+        ${question.choices
+          .map((choice, index) => {
+            const isSelected = selected.has(choice);
+            return `
+              <button
+                class="choice-chip${isSelected ? " selected" : ""}"
+                type="button"
+                data-choice-index="${index}"
+                aria-pressed="${isSelected}"
+              >
+                ${escapeHtml(choice)}
+              </button>
+            `;
+          })
+          .join("")}
+      </div>
+    </div>
+    <label class="note-label" for="answerInput">${escapeHtml(
+      question.noteLabel || "Optional detail",
+    )}</label>
+    <textarea id="answerInput" class="short-answer" placeholder="${escapeHtml(
+      question.placeholder,
+    )}">${escapeHtml(record.note)}</textarea>
+  `;
+}
+
+function renderTextInput(question) {
+  const value = getAnswer(question.id);
+
+  if (question.type === "select") {
+    return `<select id="answerInput">${question.options
+      .map(
+        (option) =>
+          `<option value="${escapeHtml(option)}" ${
+            option === value ? "selected" : ""
+          }>${escapeHtml(option)}</option>`,
+      )
+      .join("")}</select>`;
+  }
+
+  return `<textarea id="answerInput" placeholder="${escapeHtml(
+    question.placeholder,
+  )}">${escapeHtml(value)}</textarea>`;
+}
+
+function bindObjectiveInput(question, answerInput) {
+  const choiceGrid = document.querySelector(".choice-grid");
+
+  choiceGrid.addEventListener("click", (event) => {
+    const chip = event.target.closest(".choice-chip");
+    if (!chip) return;
+
+    const record = getObjectiveRecord(question);
+    const choice = question.choices[Number(chip.dataset.choiceIndex)];
+    const choices = question.multi
+      ? toggleChoice(record.choices, choice)
+      : [choice];
+
+    setObjectiveAnswer(question, choices, answerInput.value);
+    renderQuestion();
+  });
+
+  answerInput.addEventListener("input", (event) => {
+    const record = getObjectiveRecord(question);
+    setObjectiveAnswer(question, record.choices, event.target.value);
+    renderProgress();
+    renderSuggestions();
+  });
+}
+
+function toggleChoice(choices, choice) {
+  return choices.includes(choice)
+    ? choices.filter((item) => item !== choice)
+    : [...choices, choice];
 }
 
 function renderSuggestions() {
@@ -294,7 +506,12 @@ function appendTopSuggestion() {
   const next = current ? `${current}\n\n${suggestions[0]}` : suggestions[0];
 
   input.value = next;
-  setAnswer(question.id, next);
+  if (question.type === "objective") {
+    const record = getObjectiveRecord(question);
+    setObjectiveAnswer(question, record.choices, next);
+  } else {
+    setAnswer(question.id, next);
+  }
   renderProgress();
   renderSuggestions();
 }
@@ -302,7 +519,7 @@ function appendTopSuggestion() {
 async function improveCurrentAnswerWithAi() {
   const question = currentQuestion();
   const input = document.querySelector("#answerInput");
-  const current = input.value.trim();
+  const current = getAnswer(question.id).trim();
 
   if (!isAiAvailable()) {
     setAiStatus("AI mode is unavailable. The built-in suggestions still work.", true);
@@ -335,12 +552,16 @@ Improve this answer for a research paper planning tool. Keep it under 120 words.
     );
 
     const suggestion = extractAiText(response);
-    const next = current
-      ? `${current}\n\nAI refinement:\n${suggestion}`
-      : suggestion;
+    const note = input.value.trim();
+    const next = note ? `${note}\n\nAI refinement:\n${suggestion}` : suggestion;
 
     input.value = next;
-    setAnswer(question.id, next);
+    if (question.type === "objective") {
+      const record = getObjectiveRecord(question);
+      setObjectiveAnswer(question, record.choices, next);
+    } else {
+      setAnswer(question.id, next);
+    }
     renderProgress();
     renderSuggestions();
     setAiStatus("AI refinement added. You can edit it before moving on.");
