@@ -1,0 +1,10 @@
+{
+  "name": "research-plan-builder",
+  "version": "1.0.0",
+  "description": "A guided browser tool for structuring research paper ideas into titles, plans, and GenAI-ready prompts.",
+  "private": true,
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "check": "node --check app.js"
+  }
+}
