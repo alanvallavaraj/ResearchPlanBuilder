@@ -9,7 +9,7 @@
       content="A guided research planning tool for lecturers, researchers, and new research students."
     />
     <meta name="author" content="Dr Alan Vallavaraj" />
-    <link rel="stylesheet" href="styles.css?v=20261006-objective-flow" />
+    <link rel="stylesheet" href="styles.css?v=20261006-clean-flow" />
   </head>
   <body>
     <div id="starPrompt" class="star-gate" role="dialog" aria-labelledby="starPromptTitle">
@@ -42,10 +42,10 @@
       <aside class="sidebar" aria-label="Question progress">
         <div>
           <p class="eyebrow">ResearchPlanBuilder</p>
-          <h1>Build a paper idea into a research plan</h1>
+          <h1>Plan a research paper step by step</h1>
           <p class="lede">
-            Pick objective answers, add short notes where needed, and export a
-            title, plan, structure, and GenAI experiment prompt.
+            Answer one clear question at a time. Most answers are simple clicks;
+            notes are optional.
           </p>
           <p class="author-line">Created by <strong>Dr Alan Vallavaraj</strong></p>
         </div>
@@ -53,67 +53,48 @@
         <ol id="progressList" class="progress-list"></ol>
       </aside>
 
-      <section class="workspace" aria-live="polite">
-        <div class="topbar">
-          <button id="backBtn" class="icon-btn" type="button" aria-label="Go back">
-            &larr;
-          </button>
-          <div class="step-label">
-            <span id="stepCount"></span>
-            <strong id="stepTitle"></strong>
-          </div>
-          <button id="resetBtn" class="secondary-btn" type="button">Reset</button>
-        </div>
-
-        <section id="questionPanel" class="question-panel"></section>
-
-        <section class="suggestion-panel" aria-labelledby="suggestionHeading">
-          <div class="panel-header">
-            <div>
-              <p class="eyebrow">Suggestions</p>
-              <h2 id="suggestionHeading">Use these to sharpen your answer</h2>
+      <div class="main-column">
+        <section class="workspace" aria-live="polite">
+          <div class="topbar">
+            <div class="step-label">
+              <span id="stepCount"></span>
+              <strong id="stepTitle"></strong>
             </div>
-            <button id="useSuggestionBtn" class="secondary-btn" type="button">
-              Add suggestion
-            </button>
-            <button id="aiSuggestionBtn" class="secondary-btn" type="button">
-              AI improve
-            </button>
+            <button id="resetBtn" class="secondary-btn" type="button">Reset</button>
           </div>
-          <div id="suggestions" class="suggestions"></div>
+
+          <section id="questionPanel" class="question-panel"></section>
+
+          <div class="action-row">
+            <button id="backBtn" class="secondary-btn" type="button">Back</button>
+            <button id="nextBtn" class="primary-btn" type="button">Next</button>
+          </div>
           <p id="aiStatus" class="ai-status" role="status"></p>
         </section>
 
-        <div class="action-row">
-          <button id="nextBtn" class="primary-btn" type="button">Next</button>
-          <button id="finalBtn" class="secondary-btn" type="button">
-            Generate final plan
-          </button>
-        </div>
-      </section>
-
-      <section id="outputPanel" class="output-panel" aria-labelledby="outputTitle">
-        <div class="panel-header">
-          <div>
-            <p class="eyebrow">Final Output</p>
-            <h2 id="outputTitle">Title and research plan</h2>
-            <p class="tool-credit">ResearchPlanBuilder by Dr Alan Vallavaraj</p>
+        <section id="outputPanel" class="output-panel" aria-labelledby="outputTitle" hidden>
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Final Output</p>
+              <h2 id="outputTitle">Title and research plan</h2>
+              <p class="tool-credit">ResearchPlanBuilder by Dr Alan Vallavaraj</p>
+            </div>
+            <div class="output-actions">
+              <button id="copyBtn" class="secondary-btn" type="button">Copy</button>
+              <button id="aiFinalBtn" class="secondary-btn" type="button">
+                AI final
+              </button>
+              <button id="downloadBtn" class="primary-btn" type="button">
+                Download MD
+              </button>
+            </div>
           </div>
-          <div class="output-actions">
-            <button id="copyBtn" class="secondary-btn" type="button">Copy</button>
-            <button id="aiFinalBtn" class="secondary-btn" type="button">
-              AI final
-            </button>
-            <button id="downloadBtn" class="primary-btn" type="button">
-              Download MD
-            </button>
-          </div>
-        </div>
-        <pre id="outputText" class="output-text">Complete the questions to generate a plan.</pre>
-      </section>
+          <pre id="outputText" class="output-text">Complete the questions to generate a plan.</pre>
+        </section>
+      </div>
     </main>
 
     <script src="https://js.puter.com/v2/"></script>
-    <script src="app.js?v=20261006-objective-flow"></script>
+    <script src="app.js?v=20261006-clean-flow"></script>
   </body>
 </html>
