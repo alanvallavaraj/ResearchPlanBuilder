@@ -8,7 +8,7 @@ The tool runs entirely in the browser. It can be hosted from any GitHub reposito
 
 ## What It Does
 
-- Asks chained research-planning questions.
+- Asks objective, click-first research-planning questions with optional notes.
 - Gives AI-style suggestions at each stage.
 - Optionally uses Puter.js AI for live answer refinement and AI-generated final plans.
 - Includes a centred GitHub star prompt to support project discovery.
