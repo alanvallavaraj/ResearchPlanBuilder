@@ -2,6 +2,8 @@
 
 An AI-guided research design tool that turns raw paper ideas into publication-ready research plans, structured outlines, experiment prompts, and strong working titles.
 
+Created by **Dr Alan Vallavaraj**.
+
 The tool runs entirely in the browser. It can be hosted from any GitHub repository with GitHub Pages, or opened locally by double-clicking `index.html`.
 
 ## What It Does
@@ -30,6 +32,12 @@ No secret API key is stored in this repository. The default rule is simple:
 - Text entered into the tool may be sent to Puter/Liquid AI when AI mode is used.
 - If AI mode is unavailable, the app falls back to the built-in planner.
 - The GitHub star prompt opens the repository; visitors still need to click GitHub's own Star button for the star to count.
+
+## Author
+
+**Dr Alan Vallavaraj**
+
+GitHub: [alanvallavaraj](https://github.com/alanvallavaraj)
 
 ## Run Locally
 
