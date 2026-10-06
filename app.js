@@ -212,6 +212,7 @@ const elements = {
   aiStatus: document.querySelector("#aiStatus"),
   starPrompt: document.querySelector("#starPrompt"),
   starRepoLink: document.querySelector("#starRepoLink"),
+  outputPanel: document.querySelector("#outputPanel"),
   outputText: document.querySelector("#outputText"),
   copyBtn: document.querySelector("#copyBtn"),
   downloadBtn: document.querySelector("#downloadBtn"),
