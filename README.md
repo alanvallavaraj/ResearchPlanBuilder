@@ -9,6 +9,7 @@ The tool runs entirely in the browser. It can be hosted from any GitHub reposito
 - Asks chained research-planning questions.
 - Gives AI-style suggestions at each stage.
 - Optionally uses Puter.js AI for live answer refinement and AI-generated final plans.
+- Includes a tasteful GitHub star prompt to support project discovery.
 - Produces a final research title.
 - Generates a research aim, research questions, methodology guidance, paper structure, timeline, and a prompt that can be fed into GenAI or a local experiment agent.
 - Stores draft answers in browser local storage.
