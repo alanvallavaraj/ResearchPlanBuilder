@@ -218,7 +218,12 @@ const elements = {
   downloadBtn: document.querySelector("#downloadBtn"),
 };
 
-const AI_MODEL = "liquid/lfm-2.5-1.2b-instruct:free";
+const AI_MODEL = "gpt-5-nano";
+const AI_OPTIONS = {
+  max_tokens: 1800,
+  normalize: true,
+  temperature: 0.35,
+};
 const STAR_PROMPT_KEY = "researchPlanBuilderStarPromptDismissed";
 const TOOL_AUTHOR = "Dr Alan Vallavaraj";
 
@@ -542,25 +547,23 @@ async function renderAiFinalPlan() {
 
   try {
     const deterministicPlan = createMarkdownPlan();
-    const response = await puter.ai.chat(
-      [
-        {
-          role: "system",
-          content:
-            "You are a senior academic research mentor. Create rigorous but feasible research plans. Do not invent findings, datasets, approvals, citations, or completed experiments.",
-        },
-        {
-          role: "user",
-          content: `Rewrite and strengthen this research plan as polished Markdown.
+    const messages = [
+      {
+        role: "system",
+        content:
+          "You are a senior academic research mentor. Create rigorous but feasible research plans. Do not invent findings, datasets, approvals, citations, or completed experiments.",
+      },
+      {
+        role: "user",
+        content: `Rewrite and strengthen this research plan as polished Markdown.
 Keep the same core idea and user-provided constraints.
 Include: title, abstract-style summary, aim, 3-5 research questions, methodology, data/resources, evaluation, paper structure, 12-week plan, risks, and a GenAI/local experiment prompt.
 
 Plan:
 ${deterministicPlan}`,
-        },
-      ],
-      { model: AI_MODEL },
-    );
+      },
+    ];
+    const response = await requestAiPlan(messages);
 
     elements.outputText.textContent = extractAiText(response);
     showOutputPanel("AI final plan generated. Review before using it in any submission.");
@@ -572,6 +575,18 @@ ${deterministicPlan}`,
     );
   } finally {
     elements.aiFinalBtn.disabled = false;
+  }
+}
+
+async function requestAiPlan(messages) {
+  try {
+    return await puter.ai.chat(messages, false, {
+      ...AI_OPTIONS,
+      model: AI_MODEL,
+    });
+  } catch (primaryError) {
+    console.warn("Primary AI model failed, retrying with Puter default.", primaryError);
+    return puter.ai.chat(messages, false, AI_OPTIONS);
   }
 }
 
@@ -743,11 +758,26 @@ function summariseAnswers() {
 function extractAiText(response) {
   if (typeof response === "string") return response.trim();
   if (response?.text) return String(response.text).trim();
-  if (response?.message?.content) return String(response.message.content).trim();
+  if (response?.message?.content) return normaliseAiContent(response.message.content);
   if (response?.choices?.[0]?.message?.content) {
-    return String(response.choices[0].message.content).trim();
+    return normaliseAiContent(response.choices[0].message.content);
   }
   return JSON.stringify(response, null, 2);
+}
+
+function normaliseAiContent(content) {
+  if (typeof content === "string") return content.trim();
+  if (!Array.isArray(content)) return String(content || "").trim();
+
+  return content
+    .map((part) => {
+      if (typeof part === "string") return part;
+      if (typeof part?.text === "string") return part.text;
+      if (typeof part?.content === "string") return part.content;
+      return "";
+    })
+    .join("\n")
+    .trim();
 }
 
 function downloadMarkdown() {
