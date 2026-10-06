@@ -330,8 +330,50 @@ textarea {
   line-height: 1.5;
 }
 
+textarea.short-answer {
+  min-height: 92px;
+}
+
 select {
   min-height: 44px;
+}
+
+.choice-instruction {
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.choice-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.choice-chip {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--text);
+  padding: 0 14px;
+  font-weight: 700;
+}
+
+.choice-chip:hover,
+.choice-chip:focus {
+  border-color: var(--accent);
+}
+
+.choice-chip.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+
+.note-label {
+  margin-top: 8px;
 }
 
 .hint {
