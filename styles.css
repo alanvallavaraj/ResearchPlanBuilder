@@ -41,30 +41,35 @@ a {
   color: inherit;
 }
 
-.star-prompt {
+.star-gate {
   position: fixed;
-  right: 18px;
-  bottom: 18px;
+  inset: 0;
   z-index: 10;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 16px;
-  align-items: center;
-  max-width: 680px;
+  place-items: center;
+  background: rgba(20, 33, 32, 0.42);
+  padding: 18px;
+}
+
+.star-gate[hidden] {
+  display: none;
+}
+
+.star-prompt {
+  display: grid;
+  gap: 18px;
+  max-width: 520px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
   box-shadow: var(--shadow);
-  padding: 16px;
-}
-
-.star-prompt[hidden] {
-  display: none;
+  padding: 24px;
+  text-align: center;
 }
 
 .star-copy h2 {
-  margin-bottom: 6px;
-  font-size: 1.05rem;
+  margin-bottom: 10px;
+  font-size: 1.55rem;
 }
 
 .star-copy p:last-child {
@@ -73,10 +78,8 @@ a {
   line-height: 1.45;
 }
 
-.star-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.star-note {
+  font-size: 0.9rem;
 }
 
 .primary-link {
@@ -396,23 +399,6 @@ select {
 }
 
 @media (max-width: 760px) {
-  .star-prompt {
-    right: 10px;
-    bottom: 10px;
-    left: 10px;
-    grid-template-columns: 1fr;
-  }
-
-  .star-actions {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .star-actions .secondary-btn,
-  .star-actions .primary-link {
-    width: 100%;
-  }
-
   .app-shell {
     grid-template-columns: 1fr;
     padding: 10px;
