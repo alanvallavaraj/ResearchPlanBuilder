@@ -108,7 +108,7 @@ const elements = {
   aiFinalBtn: document.querySelector("#aiFinalBtn"),
   aiStatus: document.querySelector("#aiStatus"),
   starPrompt: document.querySelector("#starPrompt"),
-  dismissStarPrompt: document.querySelector("#dismissStarPrompt"),
+  starRepoLink: document.querySelector("#starRepoLink"),
   outputText: document.querySelector("#outputText"),
   copyBtn: document.querySelector("#copyBtn"),
   downloadBtn: document.querySelector("#downloadBtn"),
@@ -135,7 +135,7 @@ function initialiseStarPrompt() {
     return;
   }
 
-  elements.dismissStarPrompt.addEventListener("click", () => {
+  elements.starRepoLink.addEventListener("click", () => {
     localStorage.setItem(STAR_PROMPT_KEY, "true");
     elements.starPrompt.hidden = true;
   });
