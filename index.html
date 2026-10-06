@@ -9,7 +9,7 @@
       content="A guided research planning tool for lecturers, researchers, and new research students."
     />
     <meta name="author" content="Dr Alan Vallavaraj" />
-    <link rel="stylesheet" href="styles.css?v=20261006-clean-flow" />
+    <link rel="stylesheet" href="styles.css?v=20261006-plan-fix" />
   </head>
   <body>
     <div id="starPrompt" class="star-gate" role="dialog" aria-labelledby="starPromptTitle">
@@ -72,7 +72,13 @@
           <p id="aiStatus" class="ai-status" role="status"></p>
         </section>
 
-        <section id="outputPanel" class="output-panel" aria-labelledby="outputTitle" hidden>
+        <section
+          id="outputPanel"
+          class="output-panel"
+          aria-labelledby="outputTitle"
+          tabindex="-1"
+          hidden
+        >
           <div class="panel-header">
             <div>
               <p class="eyebrow">Final Output</p>
@@ -95,6 +101,6 @@
     </main>
 
     <script src="https://js.puter.com/v2/"></script>
-    <script src="app.js?v=20261006-clean-flow"></script>
+    <script src="app.js?v=20261006-plan-fix"></script>
   </body>
 </html>
