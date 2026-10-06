@@ -341,6 +341,20 @@ function renderQuestion() {
   renderProgress();
 }
 
+function syncCurrentInput() {
+  const question = currentQuestion();
+  const answerInput = document.querySelector("#answerInput");
+  if (!answerInput) return;
+
+  if (question.type === "objective") {
+    const record = getObjectiveRecord(question);
+    setObjectiveAnswer(question, record.choices, answerInput.value);
+    return;
+  }
+
+  setAnswer(question.id, answerInput.value);
+}
+
 function renderObjectiveInput(question) {
   const record = getObjectiveRecord(question);
   const selected = new Set(record.choices);
@@ -437,6 +451,8 @@ function isAiAvailable() {
 }
 
 function validateCurrent() {
+  syncCurrentInput();
+
   const question = currentQuestion();
   const value = getAnswer(question.id).trim();
   const validation = document.querySelector("#validationMessage");
@@ -480,6 +496,8 @@ function resetTool() {
 }
 
 function renderFinalPlan() {
+  syncCurrentInput();
+
   const missing = questions.filter((question) => !getAnswer(question.id).trim());
   if (missing.length) {
     state.index = questions.indexOf(missing[0]);
@@ -489,8 +507,18 @@ function renderFinalPlan() {
   }
 
   elements.outputText.textContent = createMarkdownPlan();
+  showOutputPanel("Your research plan is ready below.");
+}
+
+function showOutputPanel(message) {
   elements.outputPanel.hidden = false;
-  elements.outputPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+  elements.outputPanel.classList.add("ready");
+  setAiStatus(message);
+
+  requestAnimationFrame(() => {
+    elements.outputPanel.scrollIntoView({ block: "start" });
+    elements.outputPanel.focus({ preventScroll: true });
+  });
 }
 
 async function renderAiFinalPlan() {
@@ -534,9 +562,7 @@ ${deterministicPlan}`,
     );
 
     elements.outputText.textContent = extractAiText(response);
-    elements.outputPanel.hidden = false;
-    elements.outputPanel.scrollIntoView({ behavior: "smooth", block: "start" });
-    setAiStatus("AI final plan generated. Review before using it in any submission.");
+    showOutputPanel("AI final plan generated. Review before using it in any submission.");
   } catch (error) {
     renderFinalPlan();
     setAiStatus(
