@@ -205,13 +205,9 @@ const elements = {
   stepCount: document.querySelector("#stepCount"),
   stepTitle: document.querySelector("#stepTitle"),
   questionPanel: document.querySelector("#questionPanel"),
-  suggestions: document.querySelector("#suggestions"),
   backBtn: document.querySelector("#backBtn"),
   resetBtn: document.querySelector("#resetBtn"),
   nextBtn: document.querySelector("#nextBtn"),
-  finalBtn: document.querySelector("#finalBtn"),
-  useSuggestionBtn: document.querySelector("#useSuggestionBtn"),
-  aiSuggestionBtn: document.querySelector("#aiSuggestionBtn"),
   aiFinalBtn: document.querySelector("#aiFinalBtn"),
   aiStatus: document.querySelector("#aiStatus"),
   starPrompt: document.querySelector("#starPrompt"),
@@ -313,7 +309,7 @@ function renderQuestion() {
   elements.stepTitle.textContent = question.title;
   elements.backBtn.disabled = state.index === 0;
   elements.nextBtn.textContent =
-    state.index === questions.length - 1 ? "Review final plan" : "Next";
+    state.index === questions.length - 1 ? "Generate plan" : "Next";
 
   const input =
     question.type === "objective"
@@ -321,9 +317,12 @@ function renderQuestion() {
       : renderTextInput(question);
 
   elements.questionPanel.innerHTML = `
-    <div class="field-grid">
-      <label for="answerInput">${question.prompt}</label>
-      <p class="question-copy">${question.help}</p>
+    <div class="question-card">
+      <div>
+        <p class="question-kicker">${question.multi ? "Select one or more" : "Select one"}</p>
+        <h2>${question.prompt}</h2>
+        <p class="question-copy">${question.help}</p>
+      </div>
       ${input}
       <p id="validationMessage" class="validation" hidden></p>
     </div>
@@ -336,11 +335,9 @@ function renderQuestion() {
     answerInput.addEventListener("input", (event) => {
       setAnswer(question.id, event.target.value);
       renderProgress();
-      renderSuggestions();
     });
   }
 
-  renderSuggestions();
   renderProgress();
 }
 
@@ -350,7 +347,7 @@ function renderObjectiveInput(question) {
   const modeLabel = question.multi ? "Choose all that apply" : "Choose one";
 
   return `
-    <div>
+    <div class="answer-block">
       <p class="choice-instruction">${modeLabel}</p>
       <div class="choice-grid" role="group" aria-label="${escapeHtml(
         question.prompt,
@@ -372,12 +369,12 @@ function renderObjectiveInput(question) {
           .join("")}
       </div>
     </div>
-    <label class="note-label" for="answerInput">${escapeHtml(
-      question.noteLabel || "Optional detail",
-    )}</label>
-    <textarea id="answerInput" class="short-answer" placeholder="${escapeHtml(
-      question.placeholder,
-    )}">${escapeHtml(record.note)}</textarea>
+    <details class="optional-note" ${record.note ? "open" : ""}>
+      <summary>${escapeHtml(question.noteLabel || "Add optional detail")}</summary>
+      <textarea id="answerInput" class="short-answer" placeholder="${escapeHtml(
+        question.placeholder,
+      )}">${escapeHtml(record.note)}</textarea>
+    </details>
   `;
 }
 
@@ -421,7 +418,6 @@ function bindObjectiveInput(question, answerInput) {
     const record = getObjectiveRecord(question);
     setObjectiveAnswer(question, record.choices, event.target.value);
     renderProgress();
-    renderSuggestions();
   });
 }
 
@@ -429,13 +425,6 @@ function toggleChoice(choices, choice) {
   return choices.includes(choice)
     ? choices.filter((item) => item !== choice)
     : [...choices, choice];
-}
-
-function renderSuggestions() {
-  const suggestionSet = buildSuggestions();
-  elements.suggestions.innerHTML = suggestionSet
-    .map((suggestion) => `<div class="suggestion">${escapeHtml(suggestion)}</div>`)
-    .join("");
 }
 
 function setAiStatus(message, isError = false) {
@@ -447,141 +436,13 @@ function isAiAvailable() {
   return Boolean(window.puter?.ai?.chat);
 }
 
-function buildSuggestions() {
-  const answer = (id) => getAnswer(id).trim();
-  const q = currentQuestion();
-  const domain = answer("domain") || "your chosen domain";
-  const problem = answer("problem") || "the practical research problem";
-  const type = answer("paperType") || "Empirical study";
-
-  const suggestionsByStep = {
-    researcherProfile: [
-      "State the user's role and constraints clearly, because the tool can then scale the final plan for a lecturer, early-career researcher, or new student.",
-      "Add the intended paper level: class project, workshop, conference, journal pilot, or full journal article.",
-    ],
-    domain: [
-      `Anchor the topic in ${domain}, then add 3-5 keywords that reviewers would recognise.`,
-      "Include one applied setting. Strong papers usually connect the method to a real educational, industrial, clinical, creative, or organisational context.",
-    ],
-    problem: [
-      `Turn the gap into a testable sentence: current approaches struggle to address ${problem} because of a specific limitation.`,
-      "A good gap names who is affected, what decision is hard, and why existing studies are insufficient.",
-    ],
-    paperType: [
-      `${type} papers need a visible evaluation route: data, protocol, metrics, and a credible comparison point.`,
-      "If the idea includes a tool or framework, decide whether the main contribution is the artefact, its evaluation, or the theory behind it.",
-    ],
-    novelty: [
-      "Frame novelty as one primary contribution and two supporting contributions. This keeps the paper defensible.",
-      `For ${domain}, consider novelty through method combination, evaluation design, context, dataset, explainability, or reproducibility.`,
-    ],
-    data: [
-      "Separate what is already available from what must be collected. Reviewers notice feasibility immediately.",
-      "Add a fallback route using public data, simulation, or expert judgement in case participant recruitment slows down.",
-    ],
-    method: [
-      "Use a three-part method: design or data preparation, evaluation, then analysis. This makes the plan executable.",
-      `For the stated problem, include at least one baseline or alternative approach so the findings are comparative rather than descriptive.`,
-    ],
-    ethics: [
-      "Mention consent, anonymisation, prompt privacy, data retention, and how AI-generated material will be verified by humans.",
-      "Add validity threats: small sample size, domain bias, subjective scoring, reproducibility, and overgeneralisation.",
-    ],
-    target: [
-      "Match the ambition to the timeline: conference short paper for a quick study, journal paper for stronger evaluation and literature positioning.",
-      "Add deliverables by week: literature framing, prototype/protocol, data collection, analysis, writing, and revision.",
-    ],
-  };
-
-  return suggestionsByStep[q.id] || [];
-}
-
-function appendTopSuggestion() {
-  const suggestions = buildSuggestions();
-  if (!suggestions.length) return;
-
-  const question = currentQuestion();
-  const input = document.querySelector("#answerInput");
-  const current = input.value.trim();
-  const next = current ? `${current}\n\n${suggestions[0]}` : suggestions[0];
-
-  input.value = next;
-  if (question.type === "objective") {
-    const record = getObjectiveRecord(question);
-    setObjectiveAnswer(question, record.choices, next);
-  } else {
-    setAnswer(question.id, next);
-  }
-  renderProgress();
-  renderSuggestions();
-}
-
-async function improveCurrentAnswerWithAi() {
-  const question = currentQuestion();
-  const input = document.querySelector("#answerInput");
-  const current = getAnswer(question.id).trim();
-
-  if (!isAiAvailable()) {
-    setAiStatus("AI mode is unavailable. The built-in suggestions still work.", true);
-    return;
-  }
-
-  elements.aiSuggestionBtn.disabled = true;
-  setAiStatus("Asking AI for a sharper answer...");
-
-  try {
-    const response = await puter.ai.chat(
-      [
-        {
-          role: "system",
-          content:
-            "You are a senior academic research mentor. Give concise, practical research planning help. Do not invent results or claim work has been completed.",
-        },
-        {
-          role: "user",
-          content: `Question: ${question.prompt}
-Helpful context: ${question.help}
-Current answer: ${current || "(blank)"}
-Previous answers:
-${summariseAnswers()}
-
-Improve this answer for a research paper planning tool. Keep it under 120 words. Be specific and suitable for lecturers, researchers, or new research students.`,
-        },
-      ],
-      { model: AI_MODEL },
-    );
-
-    const suggestion = extractAiText(response);
-    const note = input.value.trim();
-    const next = note ? `${note}\n\nAI refinement:\n${suggestion}` : suggestion;
-
-    input.value = next;
-    if (question.type === "objective") {
-      const record = getObjectiveRecord(question);
-      setObjectiveAnswer(question, record.choices, next);
-    } else {
-      setAnswer(question.id, next);
-    }
-    renderProgress();
-    renderSuggestions();
-    setAiStatus("AI refinement added. You can edit it before moving on.");
-  } catch (error) {
-    setAiStatus(
-      "AI mode could not respond just now. The offline suggestions are still available.",
-      true,
-    );
-  } finally {
-    elements.aiSuggestionBtn.disabled = false;
-  }
-}
-
 function validateCurrent() {
   const question = currentQuestion();
   const value = getAnswer(question.id).trim();
   const validation = document.querySelector("#validationMessage");
 
   if (!value) {
-    validation.textContent = "Add a short answer before continuing.";
+    validation.textContent = "Choose an option, or add a short note before continuing.";
     validation.hidden = false;
     return false;
   }
@@ -614,6 +475,7 @@ function resetTool() {
   state.answers = {};
   saveAnswers();
   elements.outputText.textContent = "Complete the questions to generate a plan.";
+  elements.outputPanel.hidden = true;
   renderQuestion();
 }
 
@@ -627,6 +489,8 @@ function renderFinalPlan() {
   }
 
   elements.outputText.textContent = createMarkdownPlan();
+  elements.outputPanel.hidden = false;
+  elements.outputPanel.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 async function renderAiFinalPlan() {
@@ -670,6 +534,8 @@ ${deterministicPlan}`,
     );
 
     elements.outputText.textContent = extractAiText(response);
+    elements.outputPanel.hidden = false;
+    elements.outputPanel.scrollIntoView({ behavior: "smooth", block: "start" });
     setAiStatus("AI final plan generated. Review before using it in any submission.");
   } catch (error) {
     renderFinalPlan();
@@ -901,10 +767,7 @@ function escapeHtml(value = "") {
 
 elements.backBtn.addEventListener("click", previousStep);
 elements.nextBtn.addEventListener("click", nextStep);
-elements.finalBtn.addEventListener("click", renderFinalPlan);
 elements.resetBtn.addEventListener("click", resetTool);
-elements.useSuggestionBtn.addEventListener("click", appendTopSuggestion);
-elements.aiSuggestionBtn.addEventListener("click", improveCurrentAnswerWithAi);
 elements.aiFinalBtn.addEventListener("click", renderAiFinalPlan);
 elements.downloadBtn.addEventListener("click", downloadMarkdown);
 elements.copyBtn.addEventListener("click", copyOutput);
