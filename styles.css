@@ -146,7 +146,8 @@ h2 {
 .topbar,
 .panel-header,
 .action-row,
-.output-actions {
+.output-actions,
+.suggestion-actions {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -307,6 +308,19 @@ select {
   margin-top: 12px;
   color: var(--warning);
   font-weight: 700;
+}
+
+.ai-status {
+  min-height: 22px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.ai-status.error {
+  color: var(--warning);
+  font-weight: 750;
 }
 
 @media (max-width: 1120px) {
