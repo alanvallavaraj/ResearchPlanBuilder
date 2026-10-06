@@ -8,10 +8,26 @@ The tool runs entirely in the browser. It can be hosted from any GitHub reposito
 
 - Asks chained research-planning questions.
 - Gives AI-style suggestions at each stage.
+- Optionally uses Puter.js AI for live answer refinement and AI-generated final plans.
 - Produces a final research title.
 - Generates a research aim, research questions, methodology guidance, paper structure, timeline, and a prompt that can be fed into GenAI or a local experiment agent.
 - Stores draft answers in browser local storage.
 - Exports the final plan as Markdown.
+
+## AI Mode
+
+The app includes an optional Puter.js integration using:
+
+```text
+liquid/lfm-2.5-1.2b-instruct:free
+```
+
+No secret API key is stored in this repository. The default rule is simple:
+
+- Built-in suggestions work fully offline in the browser.
+- AI buttons call Puter.js only when the user clicks them.
+- Text entered into the tool may be sent to Puter/Liquid AI when AI mode is used.
+- If AI mode is unavailable, the app falls back to the built-in planner.
 
 ## Run Locally
 
