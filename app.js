@@ -107,12 +107,15 @@ const elements = {
   aiSuggestionBtn: document.querySelector("#aiSuggestionBtn"),
   aiFinalBtn: document.querySelector("#aiFinalBtn"),
   aiStatus: document.querySelector("#aiStatus"),
+  starPrompt: document.querySelector("#starPrompt"),
+  dismissStarPrompt: document.querySelector("#dismissStarPrompt"),
   outputText: document.querySelector("#outputText"),
   copyBtn: document.querySelector("#copyBtn"),
   downloadBtn: document.querySelector("#downloadBtn"),
 };
 
 const AI_MODEL = "liquid/lfm-2.5-1.2b-instruct:free";
+const STAR_PROMPT_KEY = "researchPlanBuilderStarPromptDismissed";
 
 function loadAnswers() {
   try {
@@ -124,6 +127,18 @@ function loadAnswers() {
 
 function saveAnswers() {
   localStorage.setItem("researchPlanBuilder", JSON.stringify(state.answers));
+}
+
+function initialiseStarPrompt() {
+  if (localStorage.getItem(STAR_PROMPT_KEY) === "true") {
+    elements.starPrompt.hidden = true;
+    return;
+  }
+
+  elements.dismissStarPrompt.addEventListener("click", () => {
+    localStorage.setItem(STAR_PROMPT_KEY, "true");
+    elements.starPrompt.hidden = true;
+  });
 }
 
 function currentQuestion() {
@@ -667,4 +682,5 @@ elements.aiFinalBtn.addEventListener("click", renderAiFinalPlan);
 elements.downloadBtn.addEventListener("click", downloadMarkdown);
 elements.copyBtn.addEventListener("click", copyOutput);
 
+initialiseStarPrompt();
 renderQuestion();
