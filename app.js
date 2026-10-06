@@ -224,6 +224,7 @@ const AI_OPTIONS = {
   normalize: true,
   temperature: 0.35,
 };
+const AI_TIMEOUT_MS = 30000;
 const STAR_PROMPT_KEY = "researchPlanBuilderStarPromptDismissed";
 const TOOL_AUTHOR = "Dr Alan Vallavaraj";
 
@@ -547,30 +548,15 @@ async function renderAiFinalPlan() {
 
   try {
     const deterministicPlan = createMarkdownPlan();
-    const messages = [
-      {
-        role: "system",
-        content:
-          "You are a senior academic research mentor. Create rigorous but feasible research plans. Do not invent findings, datasets, approvals, citations, or completed experiments.",
-      },
-      {
-        role: "user",
-        content: `Rewrite and strengthen this research plan as polished Markdown.
-Keep the same core idea and user-provided constraints.
-Include: title, abstract-style summary, aim, 3-5 research questions, methodology, data/resources, evaluation, paper structure, 12-week plan, risks, and a GenAI/local experiment prompt.
-
-Plan:
-${deterministicPlan}`,
-      },
-    ];
-    const response = await requestAiPlan(messages);
+    const response = await requestAiPlan(createAiPrompt(deterministicPlan));
 
     elements.outputText.textContent = extractAiText(response);
     showOutputPanel("AI final plan generated. Review before using it in any submission.");
   } catch (error) {
+    console.warn("AI mode failed, using built-in plan.", error);
     renderFinalPlan();
     setAiStatus(
-      "AI mode failed, so I generated the built-in final plan instead.",
+      "AI mode is unavailable or taking too long, so I generated the built-in final plan instead.",
       true,
     );
   } finally {
@@ -578,16 +564,41 @@ ${deterministicPlan}`,
   }
 }
 
-async function requestAiPlan(messages) {
+function createAiPrompt(deterministicPlan) {
+  return `You are a senior academic research mentor. Create a rigorous but feasible research plan.
+Do not invent findings, datasets, approvals, citations, or completed experiments.
+
+Rewrite and strengthen this research plan as polished Markdown.
+Keep the same core idea and user-provided constraints.
+Include: title, abstract-style summary, aim, 3-5 research questions, methodology, data/resources, evaluation, paper structure, 12-week plan, risks, and a GenAI/local experiment prompt.
+
+Plan:
+${deterministicPlan}`;
+}
+
+async function requestAiPlan(prompt) {
   try {
-    return await puter.ai.chat(messages, false, {
-      ...AI_OPTIONS,
-      model: AI_MODEL,
-    });
+    return await withAiTimeout(
+      puter.ai.chat(prompt, {
+        ...AI_OPTIONS,
+        model: AI_MODEL,
+      }),
+    );
   } catch (primaryError) {
     console.warn("Primary AI model failed, retrying with Puter default.", primaryError);
-    return puter.ai.chat(messages, false, AI_OPTIONS);
+    return withAiTimeout(puter.ai.chat(prompt, AI_OPTIONS));
   }
+}
+
+function withAiTimeout(request) {
+  return Promise.race([
+    request,
+    new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(new Error("AI request timed out."));
+      }, AI_TIMEOUT_MS);
+    }),
+  ]);
 }
 
 function createMarkdownPlan() {
