@@ -436,6 +436,14 @@ textarea.short-answer {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  outline: none;
+}
+
+.output-panel.ready {
+  border-color: rgba(15, 118, 110, 0.45);
+  box-shadow:
+    0 0 0 4px rgba(15, 118, 110, 0.08),
+    var(--shadow);
 }
 
 .output-text {
