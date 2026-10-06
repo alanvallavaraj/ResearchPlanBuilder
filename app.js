@@ -116,6 +116,7 @@ const elements = {
 
 const AI_MODEL = "liquid/lfm-2.5-1.2b-instruct:free";
 const STAR_PROMPT_KEY = "researchPlanBuilderStarPromptDismissed";
+const TOOL_AUTHOR = "Dr Alan Vallavaraj";
 
 function loadAnswers() {
   try {
@@ -520,6 +521,9 @@ ${timeline}
 
 ## Prompt to Feed into GenAI or a Local Experiment Agent
 ${generateGenAiPrompt()}
+
+---
+Generated with ResearchPlanBuilder by ${TOOL_AUTHOR}.
 `;
 }
 
@@ -610,7 +614,9 @@ Tasks:
 2. Suggest datasets, baselines, metrics, and analysis methods.
 3. Produce a reproducible local execution plan with code modules and outputs.
 4. Produce a manuscript structure with section-by-section writing guidance.
-5. Flag ethical, statistical, or feasibility risks before execution.`;
+5. Flag ethical, statistical, or feasibility risks before execution.
+
+Tool attribution: ResearchPlanBuilder by ${TOOL_AUTHOR}.`;
 }
 
 function summariseAnswers() {
