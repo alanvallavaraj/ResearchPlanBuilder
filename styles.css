@@ -162,6 +162,21 @@ h2 {
   line-height: 1.55;
 }
 
+.author-line,
+.tool-credit {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.author-line {
+  margin-bottom: 0;
+}
+
+.tool-credit {
+  margin: 6px 0 0;
+}
+
 .progress-list {
   display: grid;
   gap: 10px;
