@@ -9,7 +9,7 @@ The tool runs entirely in the browser. It can be hosted from any GitHub reposito
 ## What It Does
 
 - Asks objective, click-first research-planning questions with optional notes.
-- Gives AI-style suggestions at each stage.
+- Uses click-first objective choices with optional short notes.
 - Optionally uses Puter.js AI for live answer refinement and AI-generated final plans.
 - Includes a centred GitHub star prompt to support project discovery.
 - Produces a final research title.
@@ -27,7 +27,7 @@ liquid/lfm-2.5-1.2b-instruct:free
 
 No secret API key is stored in this repository. The default rule is simple:
 
-- Built-in suggestions work fully offline in the browser.
+- The guided question flow works fully offline in the browser.
 - AI buttons call Puter.js only when the user clicks them.
 - Text entered into the tool may be sent to Puter/Liquid AI when AI mode is used.
 - If AI mode is unavailable, the app falls back to the built-in planner.
@@ -75,7 +75,7 @@ ResearchPlanBuilder
 
 ## Future Enhancements
 
-- Optional OpenAI API integration for stronger live suggestions.
+- Optional OpenAI API integration for stronger live plan refinement.
 - Export to DOCX and PDF.
 - Lecturer mode for student supervision templates.
 - Journal targeting and checklist mode.
