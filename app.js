@@ -104,10 +104,15 @@ const elements = {
   nextBtn: document.querySelector("#nextBtn"),
   finalBtn: document.querySelector("#finalBtn"),
   useSuggestionBtn: document.querySelector("#useSuggestionBtn"),
+  aiSuggestionBtn: document.querySelector("#aiSuggestionBtn"),
+  aiFinalBtn: document.querySelector("#aiFinalBtn"),
+  aiStatus: document.querySelector("#aiStatus"),
   outputText: document.querySelector("#outputText"),
   copyBtn: document.querySelector("#copyBtn"),
   downloadBtn: document.querySelector("#downloadBtn"),
 };
+
+const AI_MODEL = "liquid/lfm-2.5-1.2b-instruct:free";
 
 function loadAnswers() {
   try {
@@ -205,6 +210,15 @@ function renderSuggestions() {
     .join("");
 }
 
+function setAiStatus(message, isError = false) {
+  elements.aiStatus.textContent = message;
+  elements.aiStatus.classList.toggle("error", isError);
+}
+
+function isAiAvailable() {
+  return Boolean(window.puter?.ai?.chat);
+}
+
 function buildSuggestions() {
   const answer = (id) => getAnswer(id).trim();
   const q = currentQuestion();
@@ -269,6 +283,61 @@ function appendTopSuggestion() {
   renderSuggestions();
 }
 
+async function improveCurrentAnswerWithAi() {
+  const question = currentQuestion();
+  const input = document.querySelector("#answerInput");
+  const current = input.value.trim();
+
+  if (!isAiAvailable()) {
+    setAiStatus("AI mode is unavailable. The built-in suggestions still work.", true);
+    return;
+  }
+
+  elements.aiSuggestionBtn.disabled = true;
+  setAiStatus("Asking AI for a sharper answer...");
+
+  try {
+    const response = await puter.ai.chat(
+      [
+        {
+          role: "system",
+          content:
+            "You are a senior academic research mentor. Give concise, practical research planning help. Do not invent results or claim work has been completed.",
+        },
+        {
+          role: "user",
+          content: `Question: ${question.prompt}
+Helpful context: ${question.help}
+Current answer: ${current || "(blank)"}
+Previous answers:
+${summariseAnswers()}
+
+Improve this answer for a research paper planning tool. Keep it under 120 words. Be specific and suitable for lecturers, researchers, or new research students.`,
+        },
+      ],
+      { model: AI_MODEL },
+    );
+
+    const suggestion = extractAiText(response);
+    const next = current
+      ? `${current}\n\nAI refinement:\n${suggestion}`
+      : suggestion;
+
+    input.value = next;
+    setAnswer(question.id, next);
+    renderProgress();
+    renderSuggestions();
+    setAiStatus("AI refinement added. You can edit it before moving on.");
+  } catch (error) {
+    setAiStatus(
+      "AI mode could not respond just now. The offline suggestions are still available.",
+      true,
+    );
+  } finally {
+    elements.aiSuggestionBtn.disabled = false;
+  }
+}
+
 function validateCurrent() {
   const question = currentQuestion();
   const value = getAnswer(question.id).trim();
@@ -321,6 +390,59 @@ function renderFinalPlan() {
   }
 
   elements.outputText.textContent = createMarkdownPlan();
+}
+
+async function renderAiFinalPlan() {
+  const missing = questions.filter((question) => !getAnswer(question.id).trim());
+  if (missing.length) {
+    state.index = questions.indexOf(missing[0]);
+    renderQuestion();
+    validateCurrent();
+    return;
+  }
+
+  if (!isAiAvailable()) {
+    setAiStatus("AI mode is unavailable, so I generated the built-in plan instead.", true);
+    renderFinalPlan();
+    return;
+  }
+
+  elements.aiFinalBtn.disabled = true;
+  setAiStatus("Generating an AI-refined final plan...");
+
+  try {
+    const deterministicPlan = createMarkdownPlan();
+    const response = await puter.ai.chat(
+      [
+        {
+          role: "system",
+          content:
+            "You are a senior academic research mentor. Create rigorous but feasible research plans. Do not invent findings, datasets, approvals, citations, or completed experiments.",
+        },
+        {
+          role: "user",
+          content: `Rewrite and strengthen this research plan as polished Markdown.
+Keep the same core idea and user-provided constraints.
+Include: title, abstract-style summary, aim, 3-5 research questions, methodology, data/resources, evaluation, paper structure, 12-week plan, risks, and a GenAI/local experiment prompt.
+
+Plan:
+${deterministicPlan}`,
+        },
+      ],
+      { model: AI_MODEL },
+    );
+
+    elements.outputText.textContent = extractAiText(response);
+    setAiStatus("AI final plan generated. Review before using it in any submission.");
+  } catch (error) {
+    renderFinalPlan();
+    setAiStatus(
+      "AI mode failed, so I generated the built-in final plan instead.",
+      true,
+    );
+  } finally {
+    elements.aiFinalBtn.disabled = false;
+  }
 }
 
 function createMarkdownPlan() {
@@ -476,6 +598,23 @@ Tasks:
 5. Flag ethical, statistical, or feasibility risks before execution.`;
 }
 
+function summariseAnswers() {
+  return questions
+    .filter((question) => question.id !== currentQuestion().id)
+    .map((question) => `${question.title}: ${getAnswer(question.id) || "(blank)"}`)
+    .join("\n");
+}
+
+function extractAiText(response) {
+  if (typeof response === "string") return response.trim();
+  if (response?.text) return String(response.text).trim();
+  if (response?.message?.content) return String(response.message.content).trim();
+  if (response?.choices?.[0]?.message?.content) {
+    return String(response.choices[0].message.content).trim();
+  }
+  return JSON.stringify(response, null, 2);
+}
+
 function downloadMarkdown() {
   const content = elements.outputText.textContent;
   if (!content || content.startsWith("Complete the questions")) return;
@@ -523,6 +662,8 @@ elements.nextBtn.addEventListener("click", nextStep);
 elements.finalBtn.addEventListener("click", renderFinalPlan);
 elements.resetBtn.addEventListener("click", resetTool);
 elements.useSuggestionBtn.addEventListener("click", appendTopSuggestion);
+elements.aiSuggestionBtn.addEventListener("click", improveCurrentAnswerWithAi);
+elements.aiFinalBtn.addEventListener("click", renderAiFinalPlan);
 elements.downloadBtn.addEventListener("click", downloadMarkdown);
 elements.copyBtn.addEventListener("click", copyOutput);
 
